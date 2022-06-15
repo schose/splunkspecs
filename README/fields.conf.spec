@@ -1,4 +1,4 @@
-#   Version x.x.x.1
+#   Version x.x.x
 #
 # This file contains possible attribute and value pairs for:
 #  * Telling Splunk how to handle multi-value fields.

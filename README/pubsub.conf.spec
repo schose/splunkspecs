@@ -1,4 +1,4 @@
-#   Version x.x.x.1
+#   Version x.x.x
 #
 # This file contains possible attributes and values for configuring a client of
 # the PubSub system (broker).
