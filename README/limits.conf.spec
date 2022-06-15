@@ -126,8 +126,7 @@ maxresultrows = <integer>
   which grow the size of your result set (such as multikv) or that create
   events. Other search commands are explicitly controlled in specific stanzas
   below.
-* This limit should not exceed 50000. Setting this limit higher than 50000
-  causes instability.
+* This limit should not exceed 50000. 
 * Default: 50000
 
 tocsv_maxretry = <integer>
@@ -598,6 +597,22 @@ use_metadata_elimination = <bool>
 * Control whether to use metadata to rule out buckets.
 * Default: true
 
+results_serial_format = [csv|srs]
+* The internal format used for storing serialized results on disk.
+* Options:
+*    csv: Comma-separated values format
+*    srs: Splunk binary format
+* Default: srs
+* NOTE: Do not change unless instructed to do so by Splunk Support.
+
+results_compression_algorithm = [gzip|none]
+* The compression algorithm used for storing serialized results on disk.
+* Options:
+*    gzip: gzip
+*    none: No compression
+* Default: gzip
+* NOTE: Do not change unless instructed to do so by Splunk Support.
+
 use_dispatchtmp_dir = <bool>
 * DEPRECATED. This setting has been deprecated and has no effect.
 
@@ -606,6 +621,16 @@ auto_cancel_after_pause = <integer>
   the search is automatically cancelled.
 * If set to 0, a paused search is never automatically cancelled.
 * Default: 0
+
+always_include_indexedfield_lispy = <bool>
+* Controls if we should always search for a field that does not have 
+  INDEXED=true set in fields.conf using both the indexed and non-indexed forms
+* If true, when searching for <field>=<val>, we search the lexicon for both
+  <field>::<val> and <val>
+* If false, when searching for <field>=<val>, we search the lexicon for only
+  <val> 
+* Set to true if you have fields that are sometimes indexed and sometimes not indexed.  For field name that are always indexed, it is much better performance wise to set INDEXED=true in fields.conf for that field instead.
+* Default: false
 
 ############################################################################
 # Parsing
@@ -794,9 +819,14 @@ realtime_buffer = <int>
 ############################################################################
 # This section contains settings for remote storage.
 
+bucket_localize_acquire_lock_timeout_sec = <int>
+* The maximum amount of time, in seconds, to wait when attempting to acquire a
+  lock for a localized bucket.
+* When set to 0, waits indefinitely.
+* This setting is only relevant when using remote storage.
+* Default: 60 (1 minute)
+
 bucket_localize_max_timeout_sec = <int>
-* Currently not supported. This setting is related to a feature that is
-  still under development.
 * The maximum amount of time, in seconds, to spend localizing a bucket stored 
   in remote storage.
 * If the bucket contents (what is required for the search) cannot be localized 
@@ -806,8 +836,6 @@ bucket_localize_max_timeout_sec = <int>
 * Default: 300 (5 minutes)
 
 bucket_localize_status_check_period_ms = <int>
-* Currently not supported. This setting is related to a feature that is
-  still under development.
 * The amount of time, in milliseconds, between consecutive status checks to see
   if the needed bucket contents required by the search have been localized.
 * This setting is only relevant when using remote storage.
@@ -818,8 +846,6 @@ bucket_localize_status_check_period_ms = <int>
 * Default: 500 (.5 seconds)
 
 bucket_localize_max_lookahead = <int>
-* Currently not supported. This setting is related to a feature that is
-  still under development.
 * Specifies the maximum number of buckets the search command localizes
   for look-ahead purposes, in addition to the required bucket. 
 * Increasing this value can improve performance, at the cost of additional
@@ -829,9 +855,12 @@ bucket_localize_max_lookahead = <int>
 * This setting is only relevant when using remote storage.
 * Default: 5
 
+bucket_localize_lookahead_priority_ratio = <int>
+* A value of N means that lookahead localizations will occur only 1 out of N
+  search localizations, if any.
+* Default: 5
+
 bucket_predictor = [consec_not_needed|everything]
-* Currently not supported. This setting is related to a feature that is
-  still under development.
 * Specifies which bucket file prediction algorithm to use.
 * Do not change this unless you know what you are doing.
 * Default: consec_not_needed
@@ -1266,11 +1295,14 @@ check_search_marker_sleep_interval = <integer>
 * Default: 1
 
 srtemp_dir_ttl = <integer>
-* Time to live, in seconds, before the reaper deletes srtemp directories and files
-* for intermediate search results. These directories can be found in
-* $SPLUNK_HOME/var/run/splunk/srtemp. The duration is measured by looking
-* at the newest file modification time  within the directory.
-* When set to 0: temporary files and directories are not reaped.
+* The time to live, in seconds, for the temporary files and directories
+  within the intermediate search results directory tree.
+* These files and directories are located in $SPLUNK_HOME/var/run/splunk/srtemp.
+* Every 'srtemp_dir_ttl' seconds, the reaper removes files and directories
+  within this tree to reclaim disk space.
+* The reaper measures the time to live through the newest file modification time
+  within the directory.
+* When set to 0, the reaper does not remove any files or directories in this tree.
 * Default: 86400 (24 hours)
 
 ############################################################################
@@ -1548,8 +1580,6 @@ max_reverse_matches = <integer>
 [metadata]
 
 bucket_localize_max_lookahead = <int>
-* Currently not supported. This setting is related to a feature that is
-  still under development.
 * This setting is only relevant when using remote storage.
 * Specifies the maximum number of buckets the metadata command localizes
   for look-ahead purposes, in addition to the required bucket. 
@@ -1873,8 +1903,6 @@ apply_search_filter = <boolean>
 * Default: true
 
 bucket_localize_max_lookahead = <int>
-* Currently not supported. This setting is related to a feature that is
-  still under development.
 * This setting is only relevant when using remote storage.
 * Specifies the maximum number of buckets the tstats command localizes for
   look-ahead purposes, in addition to the required bucket.
@@ -3182,7 +3210,6 @@ enabled = <bool>
 
 
 [search_optimization::projection_elimination]
-# Configuration options for projection elimination optimization
 
 enabled = <bool>
 * Enables projection elimination optimization
@@ -3223,6 +3250,12 @@ enabled = <bool>
   causing slow search performance.
 * Default: true
 
+[search_optimization::reverse_calculated_fields]
+enabled = <bool>
+* Enables reversing of calculated fields optimization.
+* Default: true
+
+
 [search_optimization::search_sort_normalization]
 enabled = <bool>
 * Enables predicate sort normalization.
@@ -3241,6 +3274,15 @@ enabled = <bool>
 * There should be no side-effects to enabling this setting and need not
   be changed unless you are troubleshooting an issue with search results.
 * Default: true
+
+[search_optimization::replace_table_with_fields]
+enabled = <bool>
+* Enables a search language optimization that replaces the table command with the fields command
+  in reporting or stream reporting searches
+* There should be no side-effects to enabling this setting and need not
+  be changed unless you are troubleshooting an issue with search results.
+* Default: true
+
 
 [directives]
 required_tags = enabled|disabled
@@ -3314,3 +3356,4 @@ winningRate = <positive integer>
 * The maximum number of indexers used as intermediate reducers is the value of
   'maxReducersPerPhase'.
 * Default: 50
+
