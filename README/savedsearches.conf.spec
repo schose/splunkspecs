@@ -938,6 +938,11 @@ embed.enabled = 0 | 1
   * The save search is not disabled, it is scheduled, it is not real-time,
     and it is not an alert.
 
+defer_scheduled_searchable_idxc = <bool>
+* Specifies whether to defer a continuous saved search during a searchable rolling restart or searchable rolling upgrade of an indexer cluster.
+* Note: When disabled, a continuous saved search might return partial results.
+* Defaults: true (enabled).
+
 #*******
 # deprecated settings
 #*******

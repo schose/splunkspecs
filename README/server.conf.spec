@@ -69,6 +69,9 @@ allowRemoteLogin = always|never|requireSetPassword
   * In the free license, remote login is disabled.
   * In the pro license, remote login is only disabled for "admin" user if
     default password of "admin" has not been changed.
+* As of version 7.1, Splunk software does not support the use of default 
+ passwords.
+
 
 tar_format = gnutar|ustar
 * Sets the default tar format.
@@ -260,6 +263,23 @@ cleanRemoteStorageByDefault = <bool>
   still under development.
 * Allows 'splunk clean eventdata' to clean the remote indexes when set to true.
 * Defaults to false.
+
+recreate_index_fetch_bucket_batch_size = <positive_integer>
+* Currently not supported. This setting is related to a feature that is
+  still under development.
+* Controls the maximum number of bucket IDs to fetch from remote storage
+  as part of a single transaction for a remote storage enabled index.
+* Only valid for standalone mode.
+* Defaults to 500.
+
+recreate_bucket_fetch_manifest_batch_size = <positive_integer>
+* Currently not supported. This setting is related to a feature that is
+  still under development.
+* Controls the maximum number of bucket manifests to fetch in parallel
+  from remote storage.
+* Only valid for standalone mode.
+* Defaults to 100.
+
 ############################################################################
 # Deployment Configuration details
 ############################################################################
@@ -458,22 +478,8 @@ sslRootCAPath = <path>
   Criteria mode until it has been certified by NIAP. See the "Securing
   Splunk Enterprise" manual for information on the status of Common
   Criteria certification.
-* This setting is valid on Windows machines only if you set
-  'sslRootCAPathHonoredonWindows' to "true".
+* This setting is not used on Windows.
 * Default is unset.
-
-sslRootCAPathHonoredOnWindows = <boolean>
-* DEPRECATED.
-* Whether or not the Splunk instance respects the 'sslRootCAPath' setting on
-  Windows machines.
-* If you set this setting to "true", then the instance respects the
-  'sslRootCAPath' setting on Windows machines.
-* This setting is valid only on Windows, and only if you have set
-  'sslRootCAPath'.
-* When the 'sslRootCAPath' setting is respected, the instance expects to find
-  a valid PEM file with valid root certificates that are referenced by that
-  path. If a valid file is not present, SSL communication fails.
-* Default: false.
 
 caCertFile = <filename>
 * DEPRECATED; use 'sslRootCAPath' instead.
@@ -1742,7 +1748,54 @@ decommission_force_finish_idle_time = <zero or positive integer>
 * A value of zero (0) means that the master does not forcibly finish 
   decommissioning.
 * Defaults to zero.
- 
+
+rolling_restart = restart|shutdown|searchable|searchable_force
+* Only valid for mode=master.
+* Determines whether indexer peers restart or shutdown during a rolling
+  restart.
+* If set to restart, each peer will automatically restart during a rolling
+  restart.
+* If set to shutdown, each peer will be stopped during a rolling restart,
+  and the customer must manually restart each peer.
+* If set to searchable, the cluster will attempt a best effort to maintain
+  a searchable state during the rolling restart by reassigning primaries
+  from peers that are about to restart to other searchable peers, and
+  performing a health check to ensure that a searchable rolling restart is
+  possible.
+* If set to searchable_force, the cluster will perform a searchable
+  rolling restart, but overrides the health check and enforces
+  'decommission_force_timeout' and 'restart_inactivity_timeout'.
+* Default: restart.
+
+site_by_site = true|false
+* Only valid for mode=master and multisite=true.
+* If set to true, the master restarts peers from one site at a time,
+  waiting for all peers from a site to restart before moving on to another
+  site, during a rolling restart.
+* If set to false, the master randomly selects peers to restart, from
+  across all sites, during a rolling restart.
+* Default: true.
+
+decommission_force_timeout = <zero or positive integer>
+* Only valid for rolling_restart=searchable_force
+* The amount of time, in seconds, the cluster master will wait for a
+  peer in primary decommission status to finish primary reassignment
+  and restart, during a searchable rolling restart with timeouts.
+* Differs from decommission_force_finish_idle_time in its default value
+  and its presence only during a searchable rolling restart with timeouts.
+* If you set this parameter to 0, it will be automatically reset to default value.
+* Maximum accepted value is 1800.
+* Default: 180.
+
+restart_inactivity_timeout = <zero or positive integer>
+* Only valid for rolling_restart=searchable_force
+* The amount of time, in seconds, that the master waits for a peer to
+  restart and rejoin the cluster before it considers the restart a failure
+  and proceeds to restart other peers.
+* A value of zero (0) means that the master waits indefinitely for a peer
+  to restart.
+* Default: 600.
+
 rep_max_send_timeout = <seconds>
 * Maximum send timeout for sending replication slice data between cluster
   nodes.
@@ -1750,14 +1803,14 @@ rep_max_send_timeout = <seconds>
   exceeded rep_max_send_timeout. If so, replication fails.
 * If cumulative rep_send_timeout exceeds rep_max_send_timeout, replication
   fails.
-* Defaults to 600s.
+* Defaults to 180s.
 
 rep_max_rcv_timeout = <seconds>
 * Maximum cumulative receive timeout for receiving acknowledgement data from
   peers.
 * On rep_rcv_timeout source peer determines if total receive timeout has
   exceeded rep_max_rcv_timeout. If so, replication fails.
-* Defaults to 600s.
+* Defaults to 180s.
 
 multisite = [true|false]
 * Turns on the multisite feature for this master.
@@ -1903,6 +1956,14 @@ quiet_period = <positive integer>
   its view of the cluster based on the registered information and
   starts normal processing.
 * Defaults to 60s.
+
+reporting_delay_period = <positive integer>
+* Only valid for mode=master
+* The acceptable amount of delay, in seconds, for reporting both unmet
+  search and unmet replication factors for newly created buckets.
+* This setting helps provide more reliable cluster status reporting
+  by limiting updates to the specified granularity.
+* Defaults to 30s.
 
 generation_poll_interval = <positive integer>
 * How often, in seconds, the search head polls the master for generation information.
@@ -2766,8 +2827,7 @@ pass4SymmKey = <password>
 * If set in the [shclustering] stanza, it takes precedence over any setting
   in the [general] stanza.
 * Defaults to 'changeme' from the [general] stanza in the default
-  server.conf. This default value is going to be removed in future versions of 
-  Splunk software.
+  server.conf.
 * Unencrypted passwords must not begin with "$1$", as this is used by
   Splunk software to determine if the password is already encrypted.
 
@@ -2944,6 +3004,13 @@ target_wait_time = <positive integer>
   schedules another fixup.
 * Defaults to 150s.
 
+manual_detention = on|off
+* This property toggles manual detention on member.
+* When a node is in manual detention, it does not accept new search jobs,
+  including both scheduled and ad-hoc searches. It also does not receive
+  replicated search artifacts from other nodes.
+* Defaults to "off".
+
 percent_peers_to_restart = <integer between 0-100>
 * The percentage of members to restart at one time during rolling restarts.
 * Actual percentage may vary due to lack of granularity for smaller peer
@@ -2958,6 +3025,25 @@ rolling_restart_with_captaincy_exchange = <bool>
 * Default = true
 * if you change it to false, captain will restart and captaincy will transfer to
 * some other node
+
+rolling_restart = restart|searchable
+* Determines the rolling restart mode for a search head cluster.
+* If set to restart, a rolling restart runs in classic mode.
+* If set to searchable, a rolling restart runs in searchable (minimal search disruption) mode.
+* Note: You do not have to restart any search head members to set this parameter.
+  Run this CLI command from any member:
+  % splunk edit shcluster-config -rolling_restart restart|searchable
+* Default: restart (runs in classic rolling-restart mode).
+
+decommission_search_jobs_wait_secs = <positive integer>
+* The amount of time, in seconds, that a search head cluster member waits for
+  existing searches to complete before restarting.
+* Applies only when rolling restart is triggered in searchable mode
+  (i.e.'rolling_restart' is set to "searchable").
+* Note: You do not have to restart search head members to set this parameter.
+  Run this CLI command from any member:
+  % splunk edit shcluster-config -decommission_search_jobs_wait_secs <positive integer>
+* Default: 180.
 
 register_replication_address = <IP address, or fully qualified machine/domain name>
 * This is the address on which a member will be available for accepting
@@ -3101,6 +3187,16 @@ conf_replication_purge.eligibile_age = <timespan>
 conf_replication_purge.period = <timespan>
 * Controls how often configuration changes are purged.
 * Defaults to '1h' (1 hour).
+
+conf_replication_find_baseline.use_bloomfilter_only = <bool>
+* Controls whether or not a search head cluster only uses bloom filters to
+  determine a baseline, when it replicates configurations.
+* Set to true to only use bloom filters in baseline determination during
+  configuration replication.
+* Set to false to first attempt a standard method, where the search head
+  cluster captain interacts with members to determine the baseline, before
+  falling back to using bloom filters.
+* Defaults to false.
 
 conf_deploy_repository = <path>
 * Full path to directory containing configurations to deploy to cluster
@@ -3459,9 +3555,9 @@ eviction_policy = <string>
   still under development.
 * The name of the eviction policy to use.
 * Current options: lru, clock, random, lrlt, noevict
-* Do not change the value from the default of "clock" unless instructed by
+* Do not change the value from the default unless instructed by
   Splunk Support.
-* Defaults to clock
+* Defaults to lru
 
 eviction_padding = <positive integer>
 * Currently not supported. This setting is related to a feature that is
@@ -3471,6 +3567,14 @@ eviction_padding = <positive integer>
 * If free space on a partition falls below ('minFreeSpace' + 'eviction_padding'),
   then the cache manager tries to evict data from remote storage enabled indexes.
 * Defaults to 5368709120 (~5GB)
+
+max_size_kb = <positive integer>
+* Currently not supported. This setting is related to a feature that is
+  still under development.
+* Specifies the maximum space, in kilobytes, per partition, that the cache can
+  occupy on disk. If this value is exceeded, the cache manager starts evicting buckets.
+* A value of 0 means this feature will not be used, and has no maximum size.
+* Defaults to 0.
 
 hotlist_recency_secs = <unsigned integer>
 * Currently not supported. This setting is related to a feature that is

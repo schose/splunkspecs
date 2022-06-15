@@ -136,9 +136,13 @@ FORMAT = <string>
   * Search-time extraction examples:
       * 1. FORMAT = first::$1 second::$2 third::other-value
       * 2. FORMAT = $1::$2
-  * If the key-name of a FORMAT setting is varying, for example $1 in the
-    example 2 just above, then the regex will continue to match against the
-    source key to extract as many matches as are present in the text.
+  * If you configure FORMAT with a variable <field-name>, such as in the second
+    example above, the regular expression is repeatedly applied to the source key
+    to match and extract all field/value pairs in the event.
+  * When you use FORMAT to set both the field and the value (such as FORMAT =
+    third::other-value), and the value is not an indexed token, you must set the
+    field to INDEXED_VALUE = false in fields.conf. Not doing so can cause 
+    inconsistent search results.
   * NOTE: You cannot create concatenated fields with FORMAT at search time.
     That functionality is only available at index time.
   * At search-time, FORMAT defaults to an empty string.
@@ -371,10 +375,15 @@ CAN_OPTIMIZE = [true|false]
 
 filename = <string>
 * Name of static lookup file.
-* File should be in $SPLUNK_HOME/etc/<app_name>/lookups/ for some <app_name>, or in
-  $SPLUNK_HOME/etc/system/lookups/
+* File should be in $SPLUNK_HOME/etc/system/lookups/, or in
+  $SPLUNK_HOME/etc/<app_name>/lookups/ if the lookup belongs to a specific app.
 * If file is in multiple 'lookups' directories, no layering is done.
 * Standard conf file precedence is used to disambiguate.
+* Only file names are supported. Paths are explicitly not supported. If you
+  specify a path, the Splunk software strips the path to use the value after
+  the final path separator.
+* The Splunk software then looks for this filename in
+  $SPLUNK_HOME/etc/system/lookups/ or $SPLUNK_HOME/etc/<app_name>/lookups/.
 * Defaults to empty string.
 
 collection = <string>
