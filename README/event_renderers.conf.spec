@@ -1,4 +1,4 @@
-#   Version x.x.x 
+#   Version x.x.x.1 
 #
 # This file contains possible attribute/value pairs for configuring event rendering properties.
 #

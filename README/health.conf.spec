@@ -1,4 +1,4 @@
-#   Version x.x.x
+#   Version x.x.x.1
 #
 # This file sets the default thresholds for Splunk Enterprise's built
 # in Health Report.

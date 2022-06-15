@@ -1,4 +1,4 @@
-#   Version x.x.x
+#   Version x.x.x.1
 ############################################################################
 # This file contains settings and values to configure server options 
 # in server.conf.
@@ -2221,6 +2221,21 @@ auto_rebalance_primaries = <boolean>
   cluster can make use of any copies in the incoming peer.
 * Default: true
 
+rebalance_primaries_execution_limit = <non-negative integer>
+* DEPRECATED. Use the 'rebalance_primaries_execution_limit_ms' setting instead.
+
+rebalance_primaries_execution_limit_ms = <non-negative integer>
+* Only valid for 'mode=master'.
+* Specifies, in milliseconds, the maximum period for one execution
+  of the rebalance primary operation.
+* This setting is useful for large clusters with large numbers of
+  buckets, to prevent the primary rebalance operation from blocking
+  other operations for significant amounts of time.
+* The default value of 0 signifies auto mode.  In auto mode, the cluster
+  master uses the value of the 'service_interval' setting to determine the
+  maximum time for the operation.
+* Default: 0
+
 idle_connections_pool_size = <integer>
 * Only valid for 'mode=master'.
 * Specifies how many idle http(s) connections we should keep alive to reuse.
@@ -2399,7 +2414,18 @@ remote_storage_upload_timeout = <non-zero positive integer>
   in seconds, after which target peers assume responsibility for 
   uploading a bucket to the remote storage, if they do not hear from 
   the source peer.
-* Default: 300 (5 minutes)
+* Default: 60 (1 minute)
+
+report_remote_storage_bucket_upload_to_targets = <boolean>
+* Only valid for 'mode=slave'.
+* For a remote storage enabled index, this attribute specifies whether
+  the source peer reports the successful bucket upload to target peers.
+  This notification is used by target peers to cancel their upload timers
+  and synchronize their bucket state with the uploaded bucket on remote
+  storage.
+* Do not change the value from the default unless instructed by
+  Splunk Support.
+* Default: false
 
 remote_storage_retention_period = <non-zero positive integer>
 * Only valid for 'mode=master'.
@@ -2428,6 +2454,16 @@ recreate_bucket_attempts_from_remote_storage = <positive integer>
        of additional peers to match the replication and search factors.
 * If set to 0, disables the re-creation of the bucket.
 * Default: 10
+
+recreate_bucket_max_per_service = <positive integer>
+* Only valid for 'mode=master'.
+* Only applies when using remote storage enabled indexes.
+* Controls the maximum number of buckets that the cluster can recreate
+  during a service interval.
+* Do not change the value from the default unless instructed by
+  Splunk Support.
+* If set to 0, recreating buckets will go at full speed.
+* Default: 0
 
 recreate_bucket_fetch_manifest_batch_size = <positive integer>
 * Only valid for 'mode=master'.
@@ -2563,6 +2599,16 @@ throwOnBucketBuildReadError = true|false
 
 cluster_label = <string>
 * This specifies the label of the indexer cluster
+
+warm_bucket_replication_pre_upload = <boolean>
+* Valid only for 'mode=slave'.
+* This setting applies to remote storage enabled indexes only.
+* If set to true, the target peers replicate all warm bucket contents when necessary for
+  bucket-fixing if the source peer has not yet uploaded the bucket to remote storage.
+* If set to false, the target peers never replicate warm bucket contents.
+* In either case the target peers replicate metadata only, once the source peer uploads
+  the bucket to remote storage.
+* Default: false
 
 [clustermaster:<stanza>]
 * Only valid for 'mode=searchhead' when the search head is a part of 
@@ -3739,6 +3785,15 @@ modificationsMaxReadSec = <integer>
   before it produces collection dumps for distributed searches.
 * Default: 30
 
+initialSyncMaxFetcherRestarts = <positive integer>
+* Specifies the maximum number of query restarts an oplog fetcher can perform 
+  before failing the ongoing Initial Sync attempt.
+* Increasing this value might help in dynamic deployments with very large 
+  KV Store databases where Initial Sync might take a long time.
+* NOTE: This setting should be changed only if you have been asked to set it by 
+  a Splunk Support engineer. It might increase KV Store cluster failover time.
+* Default: 0
+
 [indexer_discovery]
 pass4SymmKey = <password>
 * Security key shared between master node and forwarders.
@@ -3867,6 +3922,21 @@ hotlist_bloom_filter_recency_hours = <unsigned integer>
 * This setting can be overridden on a per-index basis in indexes.conf.
 * Default: 360 (15 days)
 
+evict_on_stable = <boolean>
+* When the source peer completes upload of a bucket to remote storage, it notifies the
+  target peers so that they can evict any local copies of the bucket.
+* When set to true, each target peer evicts its local copy, if any, upon such notification.
+* When set to false, each target peer continues to store its local copy, if any, until its
+  cache manager eventually evicts the bucket according to its cache eviction policy.
+* Default: false
+
+max_file_exists_retry_count = <unsigned integer>
+* The cache manager retries its check on whether the file exists on
+  remote storage when the check fails due to network errors until
+  the retry count exceeds this setting.
+* Default: 5
+
+############################################################################
 # Raft Statemachine configuration
 ############################################################################
 [raft_statemachine]
