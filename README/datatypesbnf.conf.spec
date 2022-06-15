@@ -1,4 +1,4 @@
-#   Version x.x.x.1
+#   Version x.x.x
 #
 # This file effects how the search assistant (typeahead) shows the syntax for
 # search commands.

@@ -1,4 +1,4 @@
-#   Version x.x.x.1
+#   Version x.x.x
 #
 # This file contains attribute/value pairs for configuring externalized strings
 # in messages.conf.

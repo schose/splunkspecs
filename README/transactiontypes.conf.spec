@@ -1,4 +1,4 @@
-#   Version x.x.x.1
+#   Version x.x.x
 #
 # This file contains all possible attributes and value pairs for a
 # transactiontypes.conf file.  Use this file to configure transaction searches

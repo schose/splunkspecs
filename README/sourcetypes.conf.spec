@@ -1,4 +1,4 @@
-#  Version x.x.x.1
+#  Version x.x.x
 #
 # NOTE: sourcetypes.conf is a machine-generated file that stores the document
 # models used by the file classifier for creating source types.

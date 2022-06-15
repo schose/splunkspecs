@@ -1,4 +1,4 @@
-#   Version x.x.x.1
+#   Version x.x.x
 #
 # This file contains the available product tours for Splunk onboarding.
 #

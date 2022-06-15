@@ -1,4 +1,4 @@
-#   Version x.x.x.1
+#   Version x.x.x
 #
 # This file contains descriptions of the settings that you can use to
 # configure event types and their properties.

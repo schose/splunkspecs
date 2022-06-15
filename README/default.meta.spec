@@ -1,4 +1,4 @@
-#   Version x.x.x.1
+#   Version x.x.x
 #
 #
 # *.meta files contain ownership information, access controls, and export

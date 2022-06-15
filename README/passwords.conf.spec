@@ -1,4 +1,4 @@
-#   Version x.x.x.1
+#   Version x.x.x
 #
 # This file maintains the credential information for a given app in Splunk Enterprise.
 #
