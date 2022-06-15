@@ -1,4 +1,4 @@
-#   Version x.x.x.1
+#   Version x.x.x
 #
 # *** REMOVED; NO LONGER USED ***
 #
