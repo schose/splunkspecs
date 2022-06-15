@@ -1,4 +1,4 @@
-#   Version x.x.x.1
+#   Version x.x.x
 
 # This file contains possible settings you can use to configure inputs,
 # distributed inputs such as forwarders, and file system monitoring in

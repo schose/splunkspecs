@@ -1,4 +1,4 @@
-#   Version x.x.x.1
+#   Version x.x.x
 #
 # This file contains possible setting/value pairs for saved search entries in the
 # savedsearches.conf file.  You can configure saved searches by creating your own

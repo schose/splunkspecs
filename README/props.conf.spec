@@ -1,4 +1,4 @@
-#   Version x.x.x.1
+#   Version x.x.x
 #
 # This file contains possible setting/value pairs for configuring Splunk
 # software's processing properties through props.conf.

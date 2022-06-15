@@ -1,4 +1,4 @@
-#   Version x.x.x.1
+#   Version x.x.x
 #
 # This file contains possible attribute/value pairs for configuring workflow
 # actions in Splunk.
