@@ -181,7 +181,12 @@ skipHTTPCompressionAcl = <network_acl>
 site = <site-id>
 * Specifies the site that this splunk instance belongs to when multisite is
   enabled.
-* Valid values for site-id include site1 to site63
+* Valid values for site-id include site0 to site63
+* The special value "site0" can be set only on search heads or on forwarders 
+  that are participating in indexer discovery.
+  * For a search head, "site0" disables search affinity. 
+  * For a forwarder participating in indexer discovery, "site0" causes the 
+    forwarder to send data to all peer nodes across all sites.
 
 useHTTPClientCompression = true|false|on-http|on-https
 * Whether gzip compression should be supported when Splunkd acts as a client
@@ -205,21 +210,24 @@ embedSecret = <string>
   nodes on a search head pool.
 
 parallelIngestionPipelines = <integer>
-* Data being loaded into splunk, whether for indexing or forwarding,
-  progresses through a series of steps arranged into "pipelines".
-  By setting this to more than one, more processor threads can be set up
-  to perform this work.
-* Defaults to 1.
-* NOTE: Be careful when changing this.  By increasing the CPU used by
-  data ingestion, less is available for other tasks such as searching.
-  For most installs the default setting is optimal.
+* The number of discrete data ingestion pipeline sets to create for this
+  instance.
+* A pipeline set handles the processing of data, from receiving streams
+  of events, through event processing and writing the events to disk.
+* An indexer that operates multiple pipeline sets can achieve improved
+  performance with data parsing and disk writing, at the cost of additional 
+  CPU cores. 
+* Be very careful when changing this setting. Increasing the CPU usage for data 
+  ingestion reduces available CPU cores for other tasks like searching.
+* For most installations, the default setting is optimal. 
 * NOTE: Enabling multiple ingestion pipelines can change the behavior of some
-  settings in limits.conf. Each ingestion pipeline enforces the limits
-  independently:
-    1. maxKBps
-    2. max_fd
-    3. maxHotBuckets
-    4. maxHotSpanSecs
+  settings in other configuration files. Each ingestion pipeline enforces 
+  the limits of the following settings independently:
+    1. maxKBps (in limits.conf)
+    2. max_fd (in limits.conf)
+    3. maxHotBuckets (in indexes.conf)
+    4. maxHotSpanSecs (in indexes.conf)
+* Default: 1
 
 instanceType = <string>
 * Should not be modified by users.
@@ -242,10 +250,14 @@ requireBootPassphrase = <bool>
   Criteria certification.
 
 remoteStorageRecreateIndexesInStandalone = <bool>
+* Currently not supported. This setting is related to a feature that is
+  still under development.
 * Controls re-creation of remote storage enabled indexes in standalone mode.
 * Defaults to true.
 
 cleanRemoteStorageByDefault = <bool>
+* Currently not supported. This setting is related to a feature that is
+  still under development.
 * Allows 'splunk clean eventdata' to clean the remote indexes when set to true.
 * Defaults to false.
 ############################################################################
@@ -2129,6 +2141,8 @@ heartbeat_period = <non-zero positive integer>
 * Controls the frequency the slave attempts to send heartbeats
 
 remote_storage_upload_timeout = <non-zero positive integer>
+* Currently not supported. This setting is related to a feature that is
+  still under development.
 * Only valid for mode=slave
 * Set it in seconds
 * For a remote storage enabled index, this attribute specifies the interval
@@ -2137,6 +2151,8 @@ remote_storage_upload_timeout = <non-zero positive integer>
 * Defaults to 300 seconds
 
 remote_storage_retention_period = <non-zero positive integer>
+* Currently not supported. This setting is related to a feature that is
+  still under development.
 * Only valid for mode=master
 * Set it in seconds
 * Controls the length of peer-node retention for buckets in
@@ -2145,6 +2161,8 @@ remote_storage_retention_period = <non-zero positive integer>
 * Defaults to 900 seconds
 
 recreate_bucket_attempts_from_remote_storage = <positive integer>
+* Currently not supported. This setting is related to a feature that is
+  still under development.
 * Only valid for mode=master
 * Controls the number of attempts the master will make to recreate the
   bucket of a remote storage enabled index on a random peer node
@@ -2166,6 +2184,8 @@ recreate_bucket_attempts_from_remote_storage = <positive integer>
 * Defaults to 10 attempts
 
 recreate_bucket_fetch_manifest_batch_size = <positive integer>
+* Currently not supported. This setting is related to a feature that is
+  still under development.
 * Only valid for mode=master
 * Controls the maximum number of bucket IDs for which slave will
   attempt to initiate a parallel fetch of manifests at a time
@@ -2176,6 +2196,8 @@ recreate_bucket_fetch_manifest_batch_size = <positive integer>
 * Defaults to 50 bucket IDs
 
 recreate_index_attempts_from_remote_storage = <positive integer>
+* Currently not supported. This setting is related to a feature that is
+  still under development.
 * Only valid for mode=master
 * Controls the number of attempts the master will make to recreate
   a remote storage enabled index on a random peer node when the master
@@ -2198,6 +2220,8 @@ recreate_index_attempts_from_remote_storage = <positive integer>
 * Defaults to 10 attempts
 
 recreate_index_fetch_bucket_batch_size = <positive integer>
+* Currently not supported. This setting is related to a feature that is
+  still under development.
 * Only valid for mode=master
 * Controls the maximum number of bucket IDs that the master will
   request a random peer node to fetch from remote storage as part of
@@ -2298,7 +2322,9 @@ pass4SymmKey = <password>
 site = <site-id>
 * Specifies the site this searchhead belongs to for this particular master
   when multisite is enabled (see below).
-* Valid values for site-id include site1 to site63.
+* Valid values for site-id include site0 to site63.
+* The special value "site0" disables site affinity for a search head in a 
+  multisite cluster. It is only valid for a search head.
 
 multisite = [true|false]
 * Turns on the multisite feature for this master_uri for the searchhead.
@@ -3390,28 +3416,47 @@ indexerWeightByDiskCapacity = <bool>
 ############################################################################
 [cachemanager]
 max_concurrent_downloads = <unsigned integer>
+* Currently not supported. This setting is related to a feature that is
+  still under development.
 * The maximum number of buckets that can be downloaded simultaneously from
   external storage
 * Defaults to 8
 
 max_concurrent_uploads = <unsigned integer>
+* Currently not supported. This setting is related to a feature that is
+  still under development.
 * The maximum number of buckets that can be uploaded simultaneously to external
   storage.
 * Defaults to 8
 
 eviction_policy = <string>
+* Currently not supported. This setting is related to a feature that is
+  still under development.
 * The name of the eviction policy to use.
 * Current options: lru, clock, random, lrlt, noevict
 * Do not change the value from the default of "clock" unless instructed by
   Splunk Support.
 * Defaults to clock
 
+eviction_padding = <positive integer>
+* Currently not supported. This setting is related to a feature that is
+  still under development.
+* Specifies the additional space, in bytes, beyond 'minFreeSpace' that the
+  cache manager uses as the threshold to start evicting data.
+* If free space on a partition falls below ('minFreeSpace' + 'eviction_padding'),
+  then the cache manager tries to evict data from remote storage enabled indexes.
+* Defaults to 5368709120 (~5GB)
+
 hotlist_recency_secs = <unsigned integer>
+* Currently not supported. This setting is related to a feature that is
+  still under development.
 * The cache manager attempts to defer bucket eviction until the interval between the
   bucket's latest time and the current time exceeds this setting.
 * Defaults to 86400 (24 hours)
 
 hotlist_bloom_filter_recency_hours = <unsigned integer>
+* Currently not supported. This setting is related to a feature that is
+  still under development.
 * The cache manager attempts to defer eviction of the non-journal and non-tsidx
   bucket files, such as the bloomfilter file, until the interval between the
   bucket's latest time and the current time exceeds this setting.

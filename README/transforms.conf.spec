@@ -519,6 +519,25 @@ replicate = true|false
   See distSearch.conf/[replicationWhitelist] option.
 * Defaults to true.
 
+[statsd-dims:<unique_transforms_stanza_name>]
+* 'statsd-dims' prefix indicates this stanza is applicable only to statsd metric
+  type input data.
+* This stanza is used to define regular expression to match and extract dimensions
+  out of statsd dotted name segments.
+* By default, only the unmatched segments of the statsd dotted name segment
+  becomes the metric_name.
+
+REGEX = <regular expression>
+* Splunk supports named capturing group extraction format (?<dim1>group)(?<dim2>group)..
+  to provide dimension names of the corresponding values being extracted out.
+
+REMOVE_DIMS_FROM_METRIC_NAME = <boolean>
+* By default, this is set to true.
+* If set to false, the matched dimension values from the regex above would also
+  be a part of the metric name.
+* If true, the matched dimension values would not be a part of metric name.
+
+
 #*******
 # KEYS:
 #*******
