@@ -1,4 +1,4 @@
-#   Version x.x.x.1
+#   Version x.x.x
 #
 # This file contains possible attribute/value pairs for rollup policy entries in
 # metric_rollups.conf.  You can configure rollup policies by creating your own

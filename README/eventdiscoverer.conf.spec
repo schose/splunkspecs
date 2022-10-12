@@ -1,4 +1,4 @@
-#   Version x.x.x.1
+#   Version x.x.x
 
 # This file contains possible settings and values you can use to configure
 # event discovery through the search command "typelearner."

@@ -1,4 +1,4 @@
-#   Version x.x.x.1
+#   Version x.x.x
 #
 # This file contains descriptions of the settings that you can use to
 # create multikv rules.  Multikv is the process of extracting events 

@@ -1,4 +1,4 @@
-#   Version x.x.x.1
+#   Version x.x.x
 #
 # This file contains all possible options for configuring settings for the
 # file classifier in source-classifier.conf.

@@ -1,4 +1,4 @@
-# Version x.x.x.1
+# Version x.x.x
 #
 # This file contains possible attribute/value pairs for creating new
 # Representational State Transfer (REST) endpoints.
@@ -375,6 +375,13 @@ dynamic = <boolean>
 [peerupload:...]
 path = <path>
 * The path to search through to find configuration bundles from search peers.
+
+untar = <boolean>
+* Whether or not to untar a file once the transfer is complete.
+
+[proxybundleupload:...]
+path = <path>
+* The path to search through to find proxy configuration bundles from search heads.
 
 untar = <boolean>
 * Whether or not to untar a file once the transfer is complete.
