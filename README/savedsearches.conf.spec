@@ -175,7 +175,7 @@ schedule_window = <unsigned int> | auto
 # Notification options
 #*******
 
-counttype = number of events | number of hosts | number of sources | always
+counttype = number of events | number of hosts | number of sources | custom | always
 * Set the type of count for alerting.
 * Used with relation and quantity (below).
 * NOTE: If you specify "always," do not set relation or quantity (below).
@@ -199,8 +199,6 @@ alert_condition = <search string>
 * Contains a conditional search that is evaluated against the results of the
   saved search.  Alerts are triggered if the specified search yields a
   non-empty search result list.
-* NOTE: If you specify an alert_condition, do not set counttype, relation, or
-        quantity.
 * Defaults to an empty string.
 
 
@@ -784,6 +782,10 @@ display.page.search.patterns.sensitivity = <float>
 
 # Page options
 display.page.search.mode = [fast|smart|verbose]
+* This setting has no effect on saved search execution when dispatched by the
+  scheduler. It only comes into effect when the search is opened in the UI and
+  run manually.
+
 display.page.search.timeline.format = [hidden|compact|full]
 display.page.search.timeline.scale = [linear|log]
 display.page.search.showFields = 0 | 1
