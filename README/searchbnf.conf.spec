@@ -1,4 +1,4 @@
-#   Version x.x.x
+#   Version x.x.x.1
 #
 #
 # This file contain descriptions of stanzas and attribute/value pairs for

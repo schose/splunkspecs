@@ -1,4 +1,4 @@
-#   Version x.x.x
+#   Version x.x.x.1
 #
 # This file contains possible settings and values for configuring global
 # saved search actions in the alert_actions.conf file.  Saved searches are configured
