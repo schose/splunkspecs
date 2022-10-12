@@ -97,6 +97,14 @@ srchTimeWin = <number>
 srchDiskQuota = <number>
 * Maximum amount of disk space (MB) that can be used by search jobs of a
   user that belongs to this role
+* The dispatch manager checks the quota at the dispatch time of a search
+  and additionally the search process will check at intervals that are defined
+  in the 'disk_usage_update_period' setting in limits.conf as long as the
+  search is active.
+* The quota can be exceeded at times, since the search process does not check
+  the quota constantly.
+* Exceeding this quota causes the search to be auto-finalized immediately,
+  even if there are results that have not yet been returned.
 * Defaults to '100', for 100 MB.
 
 srchJobsQuota = <number>
@@ -122,19 +130,25 @@ srchMaxTime = <number><unit>
 * Defaults to 100days
 
 srchIndexesDefault = <string>
-* Semicolon delimited list of indexes to search when no index is specified
-* These indexes can be wildcarded, with the exception that '*' does not
-  match internal indexes
+* A semicolon-delimited list of indexes to search when no index is specified.
+* These indexes can be wild-carded ("*"), with the exception that '*' does not
+  match internal indexes.
 * To match internal indexes, start with '_'. All internal indexes are
-  represented by '_*'
-* Defaults to none, but the UI will automatically populate this with 'main'
-  in manager
+  represented by '_*'.
+* The wildcard character '*' is limited to match either all the non-internal indexes
+  or all the internal indexes, but not both at once.
+* If you make any changes in the "Indexes searched by default" Settings panel
+  for a role in Splunk Web, those values take precedence, and any wildcards
+  you specify in this setting are lost.
+* Defaults to none.
 
 srchIndexesAllowed = <string>
 * Semicolon delimited list of indexes this role is allowed to search
 * Follows the same wildcarding semantics as srchIndexesDefault
-* Defaults to none, but the UI will automatically populate this with '*' in
-  manager
+* If you make any changes in the "Indexes" Settings panel
+  for a role in Splunk Web, those values take precedence, and any wildcards
+  you specify in this setting are lost.
+* Defaults to none.
 
 deleteIndexesAllowed = <string>
 * Semicolon delimited list of indexes this role is allowed to delete
@@ -424,6 +438,12 @@ cumulativeRTSrchJobsQuota = <number>
 [capability::accelerate_search]
 * Required to save an accelerated search
 * All users have this capability by default
+
+[capability::list_accelerate_search]
+* This capability is a subset of the 'accelerate_search' capability.
+* This capability grants access to the summaries that are required to run accelerated searches.
+* Users with this capability, but without the 'accelerate_search' capability, can run,
+  but not create, accelerated searches.
 
 [capability::web_debug]
 * Required to access /_bump and /debug/** web debug endpoints

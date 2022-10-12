@@ -985,6 +985,7 @@ termsOfServiceDirectory = <directory>
   * If a user hasn't accepted the current version of the TOS, they'll be required to
     the next time they try to log in.  The acceptance times will be recorded inside
     a "tos.conf" file inside an app called "tos"
+  * If the "tos" app does not exist, it must be created for acceptance times to be recorded.
   * The TOS file can either be a full HTML document or plain text, but it must have the
     ".html" suffix
   * It is not necessary to restart Splunk when adding files to the TOS directory
@@ -1052,6 +1053,13 @@ loginCustomBackgroundImage = <pathToMyFile or myApp:pathToMyFile>
       * Manual location: $SPLUNK_HOME/etc/apps/<myApp>/appserver/static/<pathToMyFile>, and type loginCustomBackgroundImage = <myApp:pathToMyFile>.
     * The login page background image updates automatically.
   * If no custom image is used, the default Splunk background image displays.
+
+appNavReportsLimit = <integer>
+* Maximum number of reports to fetch to populate the navigation drop-down menu of an app.
+* An app must be configured to list reports in its navigation XML configuration before it can list any reports.
+* Set to -1 to display all the available reports in the navigation menu.
+* NOTE: Setting to either -1 or a value that is higher than the default might result in decreased browser performance due to listing large numbers of available reports in the drop-down menu.
+* Defaults to 500.
 
 [framework]
 # Put App Framework settings here
