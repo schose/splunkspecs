@@ -869,7 +869,9 @@ requireClientCert = <bool>
 * Full path to the root CA (Certificate Authority) certificate store.
 * The <path> must refer to a PEM format file containing one or more root CA
   certificates concatenated together.
-* Defaults to false.
+* Defaults to false for self-signed and third-party certificates. If using the 
+default certificates, this attribute defaults to true and will override an existing 
+false setting.
 
 sslVersions = <string>
 * A comma-separated list of SSL versions to support.
