@@ -1,4 +1,4 @@
-#   Version x.x.x
+#   Version x.x.x.1
 #
 # This file maintains the migration status in Splunk Enterprise.
 #
