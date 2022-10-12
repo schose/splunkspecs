@@ -1,4 +1,4 @@
-#   Version x.x.x
+#   Version x.x.x.1
 #
 # This file contains possible attribute/value pairs for creating roles in
 # authorize.conf.  You can configure roles and granular access controls by
@@ -251,6 +251,9 @@ cumulativeRTSrchJobsQuota = <number>
   actually delete the raw data on disk, instead it masks the data 
   (via the index) from showing up in search results.
 
+[capability::delete_messages]
+* Lets a user delete system messages that appear in the UI navigation bar.
+
 [capability::dispatch_rest_to_indexers]
 * Lets a user dispatch the REST search command to indexers.
 
@@ -301,6 +304,14 @@ cumulativeRTSrchJobsQuota = <number>
 [capability::edit_input_defaults]
 * Lets a user change the default hostname for input data through the server
   settings endpoint.
+
+[capability::edit_local_apps]
+* Lets a user edit apps on the local Splunk instance through the
+  local apps endpoint.
+* For full access to app management, also add the 'install_apps'
+  capability to the role.
+* To enable enforcement of the "install_apps" capability, see the
+  "enable_install_apps" setting in limits.conf.
 
 [capability::edit_monitor]
 * Lets a user add inputs and edit settings for monitoring files.
@@ -427,6 +438,14 @@ configuration.
 [capability::input_file]
 * Lets a user add a file as an input through inputcsv (except for 
   dispatch=t mode) and inputlookup.
+
+[capability::install_apps]
+* Lets a user install, uninstall, create, and update apps on the local
+  Splunk platform instance through the apps/local endpoint.
+* For full access to app management, also add the 'edit_local_apps'
+  capability to the role.
+* To enable enforcement of the "install_apps" capability, see the
+  "enable_install_apps" setting in limits.conf.
 
 [capability::license_tab]
 * (Deprecated) Lets a user access and change the license.

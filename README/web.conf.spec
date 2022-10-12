@@ -1,4 +1,4 @@
-#   Version x.x.x
+#   Version x.x.x.1
 #
 # This file contains possible attributes and values you can use to configure
 # the Splunk Web interface.
@@ -497,9 +497,14 @@ dashboard_html_allow_iframes = <boolean>
   potential attacks.
 * Default: true
 
+splunk_dashboard_app_name = <string>
+* Please do not change.
+* Set the name for the Splunk Dashboard App.
+* Default: splunk-dashboard-app
+
 max_view_cache_size = <integer>
 * The maximum number of views to cache in the appserver.
-* Default: 300
+* Default: 1000
 
 pdfgen_is_available = [0 | 1]
 * Specifies whether Integrated PDF Generation is available on this search
@@ -867,17 +872,18 @@ tools.encode.encoding = <codec>
 * Default: utf-8
 
 tools.proxy.on = <boolean>
-* Used for running Apache as a proxy for Splunk Web, typically for SSO
-  configurations. 
-* Search the CherryPy website for "apache proxy" for more
-  information.
-* For Apache 1.x proxies only, set to "true". This configuration tells
-  CherryPy (the Splunk Web HTTP server) to look for an incoming
-  X-Forwarded-Host header and to use the value of that header to
-  construct canonical redirect URLs that include the proper host name. For
-  more information, refer to the CherryPy documentation on running behind an
-  Apache proxy. This setting is only necessary for Apache 1.1 proxies. 
-* For all other proxies, you must set to "false".
+* Whether or not the Splunk platform instance is behind a reverse proxy server.
+* If set to "true", the instance assumes that it is behind a reverse proxy and
+  uses HTTP header information from the proxy to log access requests, secure
+  its cookies properly, and generate valid URLs for redirect responses.
+* All of the instance's HTTP services will use information from
+  "X-Forwarded-*", "Front-End-Https", and "X-Url-Scheme" headers, where
+  available, to override what it receives from proxied requests.
+* If you set this to "true", you must also set 'tools.proxy.base' to a valid
+  host name and network port.
+* If set to "false", the instance relies on its own internal HTTP server
+  settings and the immediate client's HTTP headers for the information needed
+  for access request logging, cookie securing, and redirect URL generation.
 * Default: false
 
 tools.proxy.base = <scheme>://<URL>

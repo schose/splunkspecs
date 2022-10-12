@@ -1,4 +1,4 @@
-#   Version x.x.x
+#   Version x.x.x.1
 #
 # This file and all forms of literals.conf are now deprecated.
 # Instead, use the messages.conf file which is documented at
