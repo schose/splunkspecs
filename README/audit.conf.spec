@@ -1,4 +1,4 @@
-#   Version x.x.x.1
+#   Version x.x.x
 #
 # This file contains possible attributes and values you can use to configure
 # auditing and event signing in audit.conf.
