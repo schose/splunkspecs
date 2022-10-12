@@ -2262,6 +2262,20 @@ evt_resolve_ad_obj = <boolean>
 * If you set this setting to false, the input does not attempt any resolution.
 * Default: false (disabled) for all channels
 
+evt_skip_GUID_resolution = <comma-separated list>
+* A list of Windows Event Codes for which the Splunk platform does not contact
+  the domain controller to resolve global unique identifiers (GUIDs) that
+  are withing the event.
+* Separate multiple event IDs or event ID ranges with commas. 
+* If the event code matches an event, The Splunk platform does not contact 
+  the DC to resolve any GUIDs in this event.
+* This setting only takes effect if 'evt_resolve_ad_obj' has a value of "true".
+* If 'evt_resolve_ad_obj' has a value of "false", this setting has no effect.
+* This setting has no effect on SID resolution.
+* See 'Event ID list format' later in this file for the proper 
+  formatting of the event list.
+* Default: none
+
 evt_dc_name = <string>
 * Which Active Directory domain controller to bind to for AD object
   resolution.
@@ -2377,27 +2391,27 @@ index = <string>
 # processing load in network transfer and computation on the Splunk platform
 # nodes that acquire and processing Event Log data.
 
-whitelist = <list of eventIDs> | key=regex [key=regex]
-blacklist = <list of eventIDs> | key=regex [key=regex]
+whitelist = <comma-separated list> | key=regex [key=regex]
+blacklist = <comma-separated list> | key=regex [key=regex]
 
-whitelist1 = <list of eventIDs> | key=regex [key=regex]
-whitelist2 = <list of eventIDs> | key=regex [key=regex]
-whitelist3 = <list of eventIDs> | key=regex [key=regex]
-whitelist4 = <list of eventIDs> | key=regex [key=regex]
-whitelist5 = <list of eventIDs> | key=regex [key=regex]
-whitelist6 = <list of eventIDs> | key=regex [key=regex]
-whitelist7 = <list of eventIDs> | key=regex [key=regex]
-whitelist8 = <list of eventIDs> | key=regex [key=regex]
-whitelist9 = <list of eventIDs> | key=regex [key=regex]
-blacklist1 = <list of eventIDs> | key=regex [key=regex]
-blacklist2 = <list of eventIDs> | key=regex [key=regex]
-blacklist3 = <list of eventIDs> | key=regex [key=regex]
-blacklist4 = <list of eventIDs> | key=regex [key=regex]
-blacklist5 = <list of eventIDs> | key=regex [key=regex]
-blacklist6 = <list of eventIDs> | key=regex [key=regex]
-blacklist7 = <list of eventIDs> | key=regex [key=regex]
-blacklist8 = <list of eventIDs> | key=regex [key=regex]
-blacklist9 = <list of eventIDs> | key=regex [key=regex]
+whitelist1 = <comma-separated list> | key=regex [key=regex]
+whitelist2 = <comma-separated list> | key=regex [key=regex]
+whitelist3 = <comma-separated list> | key=regex [key=regex]
+whitelist4 = <comma-separated list> | key=regex [key=regex]
+whitelist5 = <comma-separated list> | key=regex [key=regex]
+whitelist6 = <comma-separated list> | key=regex [key=regex]
+whitelist7 = <comma-separated list> | key=regex [key=regex]
+whitelist8 = <comma-separated list> | key=regex [key=regex]
+whitelist9 = <comma-separated list> | key=regex [key=regex]
+blacklist1 = <comma-separated list> | key=regex [key=regex]
+blacklist2 = <comma-separated list> | key=regex [key=regex]
+blacklist3 = <comma-separated list> | key=regex [key=regex]
+blacklist4 = <comma-separated list> | key=regex [key=regex]
+blacklist5 = <comma-separated list> | key=regex [key=regex]
+blacklist6 = <comma-separated list> | key=regex [key=regex]
+blacklist7 = <comma-separated list> | key=regex [key=regex]
+blacklist8 = <comma-separated list> | key=regex [key=regex]
+blacklist9 = <comma-separated list> | key=regex [key=regex]
 
 * These settings are optional.
 * Both numbered and unnumbered allow lists and deny lists support two formats:
@@ -2420,6 +2434,7 @@ blacklist9 = <list of eventIDs> | key=regex [key=regex]
   * Example: 4,5,7,100-200
     * This applies to events with IDs 4, 5, 7, or any event ID between 100
       and 200, inclusive.
+  * A single asterisk (*) means all event codes.
   * The event ID list format provides no additional functionality over the
     key=regex format, but can be easier to understand:
     List format:      4,5,7,100-200

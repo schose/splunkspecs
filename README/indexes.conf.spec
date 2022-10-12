@@ -2211,7 +2211,8 @@ remote.s3.auth_region = <string>
   the value from the endpoint URL (for example, "us-west-1").  See the
   description for the remote.s3.endpoint setting.
 * If unset and an authentication region cannot be determined, the request
-  will be signed with an empty region value.
+  will be signed with an empty region value. This can lead to rejected
+  requests when using non-AWS S3-compatible storage.
 * Optional.
 * No default.
 

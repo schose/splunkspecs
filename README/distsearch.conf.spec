@@ -189,6 +189,15 @@ bcsPath = <path>
 * Optional.
 * Default: /bcs/v1/buckets
 
+searchableIndexMapping = enabled|disabled
+* Determines whether the search head maintains information on how
+  searchable indexes map to search peers.  If enabled, the search
+  head periodically requests, from its search peers, a list of
+  the searchable indexes that each peer holds.
+* Do not change this setting unless directed to do so by
+  Splunk Support.
+* Default: enabled.
+
 #******************************************************************************
 # DISTRIBUTED SEARCH KEY PAIR GENERATION OPTIONS
 #******************************************************************************

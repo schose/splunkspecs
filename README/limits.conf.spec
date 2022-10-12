@@ -664,7 +664,7 @@ max_id_length_before_hash = <integer>
 * If set to 0, the Splunk software never hashes the ID. In this case, IDs that
   are too long cause the search to fail.
 * NOTE: Do not change this setting unless instructed to do so by Splunk Support.
-* Default: 255
+* Default: 230
 
 search_keepalive_frequency = <integer>
 * Specifies how often, in milliseconds, a keepalive is sent while a search

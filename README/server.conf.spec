@@ -73,6 +73,25 @@ sessionTimeout = <nonnegative integer>[s|m|h|d]
   "7200s" (7200 seconds, or two hours)
 * Default: "1" (1 hour)
 
+invalidateSessionTokensOnLogout = <boolean>
+* A value of "true" means the SHC invalidates any tokens associated with a logged-out session
+  across all nodes in the cluster.
+* This setting has an effect only if search head clustering and App Key Value store are enabled.
+* Splunkd on each node tries to keep the logout information in sync with other nodes in the
+  cluster within the specified 'logoutCacheRefreshInterval'.
+* Default: false
+
+logoutCacheRefreshInterval = <nonnegative integer>[s|m|h|d]
+* This setting controls how often splunkd on a given node updates its local cache from the
+  App Key Value store when 'invalidateSessionTokensOnLogout' is enabled.
+* This setting has no effect when 'invalidateSessionTokensOnLogout' is disabled.
+* In normal scenarios, maximum time for changes to propogate across the cluster can be upto
+  this interval, plus a few seconds; minimum can be a second or two.
+* There is no guarantee that this sync will always happen within this time. If the system is
+  blocked because of load or other issues like network partition, the information may not be
+  propogated within the specified interval.
+* Default: 30s
+
 trustedIP = <IP address>
 * All logins from specified IP addresses are trusted. This means a
   password is no longer required.
@@ -2641,8 +2660,10 @@ rep_max_send_timeout = <integer>
   exceeded 'rep_max_send_timeout'. If so, replication fails.
 * If cumulative 'rep_send_timeout' exceeds 'rep_max_send_timeout',
   replication fails.
-* This setting is dynamically reloadable and does not require restart
-  of cluster peer.
+* For a standalone indexer, changes to this setting are dynamically reloadable
+  and do not require a restart.
+* For indexer clusters, changes to this setting trigger a rolling restart
+  of peer nodes.
 * Default: 180 (3 minutes)
 
 rep_max_rcv_timeout = <integer>
@@ -2652,8 +2673,10 @@ rep_max_rcv_timeout = <integer>
 * On 'rep_rcv_timeout' source peer determines if total
   receive timeout has exceeded 'rep_max_rcv_timeout'.
   If so, replication fails.
-* This setting is dynamically reloadable and does not require restart
-  of cluster peer.
+* For a standalone indexer, changes to this setting are dynamically reloadable
+  and do not require a restart.
+* For indexer clusters, changes to this setting trigger a rolling restart
+  of peer nodes.
 * Default: 180 (3 minutes)
 
 multisite = <boolean>

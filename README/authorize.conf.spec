@@ -253,16 +253,11 @@ srchIndexesDefault = <semicolon-separated list>
   represented by "_*".
 * The wildcard character "*" is limited to match either all the non-internal
   indexes or all the internal indexes, but not both at once.
-* If you make any changes in the "Indexes searched by default" Settings panel
-  for a role in Splunk Web, those values take precedence, and any wildcards
-  you specify in this setting are lost.
 * No default.
 
 srchIndexesAllowed = <semicolon-separated list>
 * A list of indexes that this role is allowed to search.
 * Follows the same wildcarding semantics as the 'srchIndexesDefault' setting.
-* If you make any changes in the "Indexes" Settings panel for a role in Splunk Web,
-  those values take precedence, and any wildcards you specify in this setting are lost.
 * No default.
 
 srchIndexesDisallowed = <semicolon-separated list>
