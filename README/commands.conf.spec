@@ -1,4 +1,4 @@
-#   Version x.x.x.1
+#   Version x.x.x
 #
 # This file contains possible attribute/value pairs for creating search
 # commands for any custom search scripts created.  Add your custom search

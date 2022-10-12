@@ -1,4 +1,4 @@
-#   Version x.x.x.1
+#   Version x.x.x
 #
 # This file contains definitions for visualizations an app makes available
 # to the system. An app intending to share visualizations with the system

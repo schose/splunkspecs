@@ -1,4 +1,4 @@
-#   Version x.x.x.1
+#   Version x.x.x
 #
 # This file contains possible attribute and value pairs for creating new
 # Representational State Transfer (REST) endpoints.

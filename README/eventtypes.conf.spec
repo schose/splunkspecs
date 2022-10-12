@@ -1,4 +1,4 @@
-#   Version x.x.x.1
+#   Version x.x.x
 #
 # This file contains all possible attributes and value pairs for an
 # eventtypes.conf file.  Use this file to configure event types and their
